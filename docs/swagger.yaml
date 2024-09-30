@@ -1,0 +1,129 @@
+basePath: /
+definitions:
+  Account:
+    type: object
+    properties:
+      account_id:
+        type: integer
+      document_number:
+        type: string
+    required:
+      - document_number
+  Transaction:
+    type: object
+    properties:
+      transaction_id:
+        type: integer
+      account_id:
+        type: integer
+      operation_type_id:
+        type: integer
+      amount:
+        type: number
+        format: float
+      event_date:
+        type: string
+        format: date-time
+    required:
+      - account_id
+      - operation_type_id
+      - amount
+  OperationType:
+    type: object
+    properties:
+      operation_type_id:
+        type: integer
+      description:
+        type: string
+host: localhost:8080
+info:
+  contact:
+    email: thg.mnzs@gmail.com
+    name: Thiago Menezes
+  description: Pismo Challenge API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Pismo Challenge API
+  version: "1.0"
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new account with the input payload
+      parameters:
+      - description: Create account
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/Account'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Account'
+      summary: Create a new account
+      tags:
+      - accounts
+    get:
+      consumes:
+      - application/json
+      description: Get details of an account by ID
+      produces:
+      - application/json
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Account'
+        "404":
+          description: Not Found
+      summary: Get account details
+      tags:
+      - accounts
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction with the input payload
+      parameters:
+      - description: Create transaction
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Transaction'
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Get health status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get health status
+      tags:
+      - health
+swagger: "2.0"
