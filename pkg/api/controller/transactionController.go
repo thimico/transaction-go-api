@@ -23,25 +23,30 @@ func NewTransactionController(service service.Transaction) *TransactionCtrlImpl 
 
 func (p *TransactionCtrlImpl) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	var in model.TransactionIn
 	err := json.NewDecoder(r.Body).Decode(&in)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	error := ValidateTransaction(&in)
 	if error != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+
 	transaction, err := p.service.Create(context.Background(), &in)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
+
 	encoder := json.NewEncoder(w)
 	encoder.Encode(transaction)
-	w.WriteHeader(http.StatusCreated)
 }
 
 func ValidateTransaction(v interface{}) error {

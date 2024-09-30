@@ -25,25 +25,30 @@ func NewAccountController(service service.Account) *AccountCtrlImpl {
 
 func (p *AccountCtrlImpl) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	var in model.AccountIn
 	err := json.NewDecoder(r.Body).Decode(&in)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	error := ValidateAccount(&in)
 	if error != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
+
 	account, err := p.service.Create(context.Background(), &in)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
+
 	encoder := json.NewEncoder(w)
 	encoder.Encode(account)
-	w.WriteHeader(http.StatusCreated)
 }
 
 func (p *AccountCtrlImpl) GetAccount(w http.ResponseWriter, r *http.Request) {

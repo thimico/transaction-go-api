@@ -2,34 +2,25 @@ package controller
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"net/http/httptest"
+	"projeto-pismo-api-go/pkg/api/controller/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"projeto-pismo-api-go/pkg/api/model"
 )
 
-type MockTransactionService struct{}
-
-func (m *MockTransactionService) Create(ctx context.Context, in *model.TransactionIn) (*model.TransactionOut, error) {
-	return &model.TransactionOut{
-		ID:        primitive.NewObjectID(),
-		AccountID: in.AccountID,
-		Amount:    in.Amount,
-	}, nil
-}
-
 func TestCreateTransaction(t *testing.T) {
-	mockService := &MockTransactionService{}
+	mockService := &mocks.MockTransactionService{}
 	controller := NewTransactionController(mockService)
 
 	transactionIn := &model.TransactionIn{
-		AccountID: primitive.NewObjectID(),
-		Amount:    100,
+		AccountID:       primitive.NewObjectID(),
+		OperationTypeID: 4,
+		Amount:          100,
 	}
 	body, _ := json.Marshal(transactionIn)
 	req, err := http.NewRequest("POST", "/transactions", bytes.NewBuffer(body))
